@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Fucking Game</title>
+    <!-- <script src = "./scripts/vue.js"></script> -->
+</head>
+
+
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            template: `
+                    <div>
+                        <h1>Fucking Game</h1>
+                        <h2>Number of moves: {{board.num}}</h2>
+                        <ul v-for = "(col, i) in board.cols">
+                            <li v-for = "(row, j) in col" class = "dot" ref = "tile" v-on:click = "changeOrientation(i, j)">
+                                <img v-bind:src = "row.image" v-bind:style = "getStyleObject(row)" class = "image"></img>
+                            </li>
+                        </ul>
+                    </div>`,
+            data() {
+                return {
+                    board: {
+                        cols: [],
+                        num: 0,
+                    }
+                }
+            },
+            methods: {
+                changeOrientation(i, j) {
+                    if (this.board.cols[i][j].orientation == "up") {
+                        this.board.cols[i][j].orientation = "sideways";
+                    } else if (this.board.cols[i][j].orientation == "sideways") {
+                        this.board.cols[i][j].orientation = "up";
+                    }
+                    this.board.cols[i][j].degree = this.board.cols[i][j].degree + 90;
+                    this.board.num++;
+                },
+                getStyleObject(row) {
+                    return {
+                        transform: 'rotateZ(' + row.degree + 'deg)'
+                    }
+                }
+
+            },
+            watch: {
+                board: function (val, oldVal) {
+                    console.log('new: %s, old: %s', val, oldVal);
+                }
+            },
+            created() {
+                for (var i = 0; i < 10; i++) {
+                    this.board.cols[i] = [];
+                    for (var j = 0; j < 10; j++) {
+                        rand = Math.random();
+                        var orientation = "";
+                        var image = "";
+                        var degree = 0;
+                        if (rand < 0.15) {
+                            orientation = "up";
+                            image = "up.png";
+                        } else if ((rand >= 0.15) && (rand <= 0.3)) {
+                            orientation = "sideways";
+                            image = "up.png";
+                            degree = 90;
+                        } else {
+                            orientation = "corner";
+                            image = "corner.png";
+                        }
+                        this.board.cols[i].push({
+                            orientation: orientation,
+                            image: image,
+                            degree: degree
+                        });
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
